@@ -20,6 +20,16 @@ As a result, the following resources will be created:
 - A Service Account with the name `IDENTITY_NAME`
 - A Secret with the name `IDENTITY_NAME-secret-1` and type `kubernetes.io/service-account-token`
 
+## Create a new Token Version
+
+To create a new Token version you can use the following command:
+
+```console
+kid crate token "IDENTITY_NAME"
+```
+
+If the last secret for Identity with name `IDENTITY_NAME` is `IDENTITY_NAME-secret-<n>`, a new `IDENTITY_NAME-secret-<n+1>` is created.
+
 ## Read the JWT Token for an identity
 
 ```console

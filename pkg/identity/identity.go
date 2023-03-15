@@ -67,7 +67,7 @@ func CreateIdentity(ctx context.Context, cli kubernetes.Clientset, name string, 
 	}, nil
 }
 
-func BeginIdentityKeyRotation(ctx context.Context, cli kubernetes.Clientset, name string, namespace string) (*corev1.Secret, error) {
+func CreateNewTokenVersion(ctx context.Context, cli kubernetes.Clientset, name string, namespace string) (*corev1.Secret, error) {
 	sa, err := cli.CoreV1().ServiceAccounts(namespace).Get(ctx, name, mv1.GetOptions{})
 	if err != nil {
 		return nil, err
@@ -84,6 +84,10 @@ func BeginIdentityKeyRotation(ctx context.Context, cli kubernetes.Clientset, nam
 	}
 
 	return kid.CreateServiceAccountSecret(ctx, cli, *sn, namespace, sa)
+}
+
+func BeginIdentityKeyRotation(ctx context.Context, cli kubernetes.Clientset, name string, namespace string) (*corev1.Secret, error) {
+	return CreateNewTokenVersion(ctx, cli, name, namespace)
 }
 
 func RollbackIdentityKey(ctx context.Context, cli kubernetes.Clientset, name string, namespace string, version uint64) (*corev1.Secret, error) {
