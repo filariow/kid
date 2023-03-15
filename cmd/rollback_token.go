@@ -19,16 +19,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
 package cmd
 
 import (
+	"fmt"
+	"strconv"
+
+	"github.com/filariow/ksa/pkg/identity"
+	"github.com/filariow/ksa/pkg/ksa"
 	"github.com/spf13/cobra"
 )
 
-// getCmd represents the get command
-var getCmd = &cobra.Command{
-	Use:   "get",
+// rollbackTokenCmd represents the token command
+var rollbackTokenCmd = &cobra.Command{
+	Use:   "token",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -36,8 +40,28 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
+	Args: cobra.ExactArgs(2),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		cli, err := ksa.GetCurrentContextClient()
+		if err != nil {
+			return err
+		}
+
+		uv, err := strconv.ParseUint(args[1], 10, 64)
+		if err != nil {
+			return err
+		}
+
+		s, err := identity.RollbackIdentityKey(cmd.Context(), *cli, args[0], namespace, uv)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("secret rolled back '%s/%s'\n", s.Namespace, s.Name)
+		return nil
+	},
 }
 
 func init() {
-	rootCmd.AddCommand(getCmd)
+	rollbackCmd.AddCommand(rollbackTokenCmd)
 }

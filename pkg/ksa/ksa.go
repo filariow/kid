@@ -1,3 +1,25 @@
+/*
+Copyright © 2023 Francesco Ilario
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
 package ksa
 
 import (
@@ -5,8 +27,8 @@ import (
 	"fmt"
 
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	mv1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	av1 "k8s.io/client-go/applyconfigurations/core/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
@@ -108,7 +130,7 @@ func getSecretDataField(secret *corev1.Secret, field string) ([]byte, error) {
 	return d, nil
 }
 
-func GetLatestServiceAccountSecrets(ctx context.Context, cli kubernetes.Clientset, name string, namespace string) (*corev1.Secret, error) {
+func GetLastServiceAccountSecrets(ctx context.Context, cli kubernetes.Clientset, name string, namespace string) (*corev1.Secret, error) {
 	ss, err := GetServiceAccountSecrets(ctx, cli, name, namespace)
 	if err != nil {
 		return nil, err
@@ -120,7 +142,7 @@ func GetLatestServiceAccountSecrets(ctx context.Context, cli kubernetes.Clientse
 
 	fs := ss[0]
 	for _, s := range ss[1:] {
-		if s.GetCreationTimestamp().Compare(fs.GetCreationTimestamp().Time) < 0 {
+		if s.GetCreationTimestamp().Compare(fs.GetCreationTimestamp().Time) >= 0 {
 			fs = s
 		}
 	}
@@ -143,20 +165,41 @@ func GetServiceAccountSecrets(ctx context.Context, cli kubernetes.Clientset, nam
 	return fss, nil
 }
 
-func CreateServiceAccountSecret(ctx context.Context, cli kubernetes.Clientset, name string, namespace string, saname string) (*corev1.Secret, error) {
-	s := av1.Secret(name, namespace)
-	s.WithType(corev1.SecretTypeServiceAccountToken)
-	s.WithAnnotations(map[string]string{
-		corev1.ServiceAccountNameKey: saname,
-	})
+func CreateServiceAccountSecret(ctx context.Context, cli kubernetes.Clientset, name string, namespace string, sa *corev1.ServiceAccount) (*corev1.Secret, error) {
+	s := &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: namespace,
+			Annotations: map[string]string{
+				corev1.ServiceAccountNameKey: sa.Name,
+			},
+			OwnerReferences: []metav1.OwnerReference{
+				{
+					APIVersion: "v1",
+					Kind:       "ServiceAccount",
+					Name:       sa.Name,
+					UID:        sa.UID,
+				},
+			},
+		},
+		Type: corev1.SecretTypeServiceAccountToken,
+	}
 
-	o := mv1.ApplyOptions{FieldManager: "application/apply-patch"}
-	return cli.CoreV1().Secrets(namespace).Apply(ctx, s, o)
+	return cli.CoreV1().Secrets(namespace).Create(ctx, s, mv1.CreateOptions{})
+}
+
+func DeleteServiceAccountSecret(ctx context.Context, cli kubernetes.Clientset, name string, namespace string) error {
+	return cli.CoreV1().Secrets(namespace).Delete(ctx, name, mv1.DeleteOptions{})
 }
 
 func CreateServiceAccount(ctx context.Context, cli kubernetes.Clientset, name string, namespace string) (*corev1.ServiceAccount, error) {
-	c := av1.ServiceAccount(name, namespace)
+	c := &corev1.ServiceAccount{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: namespace,
+		},
+	}
 
-	o := mv1.ApplyOptions{FieldManager: "application/apply-patch"}
-	return cli.CoreV1().ServiceAccounts(namespace).Apply(ctx, c, o)
+	o := mv1.CreateOptions{}
+	return cli.CoreV1().ServiceAccounts(namespace).Create(ctx, c, o)
 }

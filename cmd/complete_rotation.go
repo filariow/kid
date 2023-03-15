@@ -19,31 +19,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package cmd
 
 import (
 	"fmt"
 
+	"github.com/filariow/ksa/pkg/identity"
 	"github.com/filariow/ksa/pkg/ksa"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 )
 
-const (
-	getKubeconfigTargetNamespaceLongParam string = "target-namespace"
-	getKubeconfigServerUrlLongParam       string = "server-url"
-	getKubeconfigUserLongParam            string = "user"
-)
-
-var (
-	getKubeconfigTargetNamespace string
-	getKubeconfigServerUrl       string
-	getKubeconfigUser            string
-)
-
-// kubeconfigCmd represents the kubeconfig command
-var kubeconfigCmd = &cobra.Command{
-	Use:   "kubeconfig",
+// completeRotationCmd represents the rotation command
+var completeRotationCmd = &cobra.Command{
+	Use:   "rotation",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -59,52 +48,17 @@ to quickly create a Cobra application.`,
 		}
 
 		ctx := cmd.Context()
-
 		name := args[0]
-		s, err := ksa.GetLatestServiceAccountSecrets(ctx, *cli, name, namespace)
+		s, err := identity.CompleteIdentityKeyRotation(ctx, *cli, name, namespace)
 		if err != nil {
 			return err
 		}
 
-		tkn, err := ksa.GetToken(s)
-		if err != nil {
-			return err
-		}
-
-		o := getKubeconfigOptionsFromFlags(cmd.Flags())
-		kfg, err := ksa.GetKubeconfig(*cli, tkn, o)
-		if err != nil {
-			return err
-		}
-
-		fmt.Println(string(kfg))
-
+		fmt.Printf("deleted secret '%s/%s'\n", namespace, *s)
 		return nil
 	},
 }
 
 func init() {
-	getCmd.AddCommand(kubeconfigCmd)
-
-	kubeconfigCmd.Flags().StringVarP(&getKubeconfigTargetNamespace, getKubeconfigTargetNamespaceLongParam, "t", "", "Target namespace to set in kubeconfig")
-	kubeconfigCmd.Flags().StringVarP(&getKubeconfigServerUrl, getKubeconfigServerUrlLongParam, "s", "", "if set overrides the cluster server URL")
-	kubeconfigCmd.Flags().StringVarP(&getKubeconfigUser, getKubeconfigUserLongParam, "u", "", "if set overrides the user")
-}
-
-func getKubeconfigOptionsFromFlags(ff *pflag.FlagSet) ksa.GetKubeconfigOptions {
-	o := ksa.GetKubeconfigOptions{}
-
-	if ff.Changed(getKubeconfigTargetNamespaceLongParam) {
-		o.Namespace = &getKubeconfigTargetNamespace
-	}
-
-	if ff.Changed(getKubeconfigServerUrlLongParam) {
-		o.OverrideHost = &getKubeconfigServerUrl
-	}
-
-	if ff.Changed(getKubeconfigUserLongParam) {
-		o.User = &getKubeconfigUser
-	}
-
-	return o
+	completeCmd.AddCommand(completeRotationCmd)
 }

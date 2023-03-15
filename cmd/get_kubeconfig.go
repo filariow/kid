@@ -19,6 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package cmd
 
 import (
@@ -26,11 +27,24 @@ import (
 
 	"github.com/filariow/ksa/pkg/ksa"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
-// identityCmd represents the identity command
-var identityCmd = &cobra.Command{
-	Use:   "identity",
+const (
+	getKubeconfigTargetNamespaceLongParam string = "target-namespace"
+	getKubeconfigServerUrlLongParam       string = "server-url"
+	getKubeconfigUserLongParam            string = "user"
+)
+
+var (
+	getKubeconfigTargetNamespace string
+	getKubeconfigServerUrl       string
+	getKubeconfigUser            string
+)
+
+// getKubeconfigCmd represents the kubeconfig command
+var getKubeconfigCmd = &cobra.Command{
+	Use:   "kubeconfig",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -46,23 +60,52 @@ to quickly create a Cobra application.`,
 		}
 
 		ctx := cmd.Context()
+
 		name := args[0]
-
-		if _, err := ksa.CreateServiceAccount(ctx, *cli, name, namespace); err != nil {
-			return err
-		}
-		fmt.Printf("Service account '%s/%s' created\n", namespace, name)
-
-		sec, err := ksa.CreateServiceAccountSecret(ctx, *cli, name+"-secret", namespace, name)
+		s, err := ksa.GetLastServiceAccountSecrets(ctx, *cli, name, namespace)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Secret '%s/%s' created\n", namespace, sec.Name)
+
+		tkn, err := ksa.GetToken(s)
+		if err != nil {
+			return err
+		}
+
+		o := getKubeconfigOptionsFromFlags(cmd.Flags())
+		kfg, err := ksa.GetKubeconfig(*cli, tkn, o)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(string(kfg))
 
 		return nil
 	},
 }
 
 func init() {
-	createCmd.AddCommand(identityCmd)
+	getCmd.AddCommand(getKubeconfigCmd)
+
+	getKubeconfigCmd.Flags().StringVarP(&getKubeconfigTargetNamespace, getKubeconfigTargetNamespaceLongParam, "t", "", "Target namespace to set in kubeconfig")
+	getKubeconfigCmd.Flags().StringVarP(&getKubeconfigServerUrl, getKubeconfigServerUrlLongParam, "s", "", "if set overrides the cluster server URL")
+	getKubeconfigCmd.Flags().StringVarP(&getKubeconfigUser, getKubeconfigUserLongParam, "u", "", "if set overrides the user")
+}
+
+func getKubeconfigOptionsFromFlags(ff *pflag.FlagSet) ksa.GetKubeconfigOptions {
+	o := ksa.GetKubeconfigOptions{}
+
+	if ff.Changed(getKubeconfigTargetNamespaceLongParam) {
+		o.Namespace = &getKubeconfigTargetNamespace
+	}
+
+	if ff.Changed(getKubeconfigServerUrlLongParam) {
+		o.OverrideHost = &getKubeconfigServerUrl
+	}
+
+	if ff.Changed(getKubeconfigUserLongParam) {
+		o.User = &getKubeconfigUser
+	}
+
+	return o
 }

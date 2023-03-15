@@ -23,12 +23,17 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/filariow/ksa/pkg/identity"
+	"github.com/filariow/ksa/pkg/ksa"
 	"github.com/spf13/cobra"
 )
 
-// getCmd represents the get command
-var getCmd = &cobra.Command{
-	Use:   "get",
+// createIdentityCmd represents the identity command
+var createIdentityCmd = &cobra.Command{
+	Use:   "identity",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -36,8 +41,30 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
+	Args: cobra.MatchAll(cobra.ExactArgs(1)),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		cli, err := ksa.GetCurrentContextClient()
+		if err != nil {
+			return err
+		}
+
+		ctx := cmd.Context()
+		name := args[0]
+		i, err := identity.CreateIdentity(ctx, *cli, name, namespace)
+		if err != nil {
+			return err
+		}
+
+		j, err := json.MarshalIndent(i, "", "  ")
+		if err != nil {
+			return err
+		}
+		fmt.Println(string(j))
+
+		return nil
+	},
 }
 
 func init() {
-	rootCmd.AddCommand(getCmd)
+	createCmd.AddCommand(createIdentityCmd)
 }

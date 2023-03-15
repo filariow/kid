@@ -19,11 +19,24 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+package cmd
 
-package main
+import (
+	"github.com/spf13/cobra"
+)
 
-import "github.com/filariow/ksa/cmd"
+// revokeCmd represents the revoke command
+var revokeCmd = &cobra.Command{
+	Use:   "revoke",
+	Short: "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
 
-func main() {
-	cmd.Execute()
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+}
+
+func init() {
+	rootCmd.AddCommand(revokeCmd)
 }

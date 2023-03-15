@@ -19,6 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package cmd
 
 import (
@@ -29,8 +30,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// tokenCmd represents the token command
-var tokenCmd = &cobra.Command{
+// getTokenCmd represents the token command
+var getTokenCmd = &cobra.Command{
 	Use:   "token",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
@@ -48,7 +49,7 @@ to quickly create a Cobra application.`,
 
 		ctx := cmd.Context()
 		name := args[0]
-		kdsec, err := ksa.GetLatestServiceAccountSecrets(ctx, *cli, name, namespace)
+		kdsec, err := ksa.GetLastServiceAccountSecrets(ctx, *cli, name, namespace)
 		if err != nil {
 			return err
 		}
@@ -70,5 +71,5 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	getCmd.AddCommand(tokenCmd)
+	getCmd.AddCommand(getTokenCmd)
 }

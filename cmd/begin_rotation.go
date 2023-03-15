@@ -20,10 +20,45 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package main
+package cmd
 
-import "github.com/filariow/ksa/cmd"
+import (
+	"fmt"
 
-func main() {
-	cmd.Execute()
+	"github.com/filariow/ksa/pkg/identity"
+	"github.com/filariow/ksa/pkg/ksa"
+	"github.com/spf13/cobra"
+)
+
+// bneginRotationCmd represents the rotation command
+var beginRotationCmd = &cobra.Command{
+	Use:   "rotation",
+	Short: "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+	Args: cobra.MatchAll(cobra.ExactArgs(1)),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		cli, err := ksa.GetCurrentContextClient()
+		if err != nil {
+			return err
+		}
+
+		ctx := cmd.Context()
+		name := args[0]
+		s, err := identity.BeginIdentityKeyRotation(ctx, *cli, name, namespace)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("created secret '%s/%s'\n", s.Namespace, s.Name)
+		return nil
+	},
+}
+
+func init() {
+	beginCmd.AddCommand(beginRotationCmd)
 }

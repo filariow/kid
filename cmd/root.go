@@ -19,6 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 package cmd
 
 import (
@@ -56,18 +57,10 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
 	ns, err := ksa.GetConfigDefaultNamespace()
 	if err != nil {
 		fmt.Fprint(os.Stderr, "can not parse namespace from kubeconfig, using default")
 		*ns = "default"
 	}
 	rootCmd.PersistentFlags().StringVarP(&namespace, "namespace", "n", *ns, "the namespace where to operate")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

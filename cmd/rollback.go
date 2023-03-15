@@ -19,11 +19,29 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+package cmd
 
-package main
+import (
+	"fmt"
 
-import "github.com/filariow/ksa/cmd"
+	"github.com/spf13/cobra"
+)
 
-func main() {
-	cmd.Execute()
+// rollbackCmd represents the rollback command
+var rollbackCmd = &cobra.Command{
+	Use:   "rollback",
+	Short: "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("rollback called")
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(rollbackCmd)
 }
