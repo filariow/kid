@@ -43,3 +43,41 @@ The following parameters may be overwritten:
 - Server URL
 - Context's namespace
 - Context's username
+
+## Rotate Identity's Token
+
+Key rotation is performed in two steps.
+In the first step you will create a new key, in the second you will delete the old one.
+
+```console
+kid begin rotation "IDENTITY_NAME"
+```
+
+If the last secret for Identity with name `IDENTITY_NAME` is `IDENTITY_NAME-secret-<n>`, a new `IDENTITY_NAME-secret-<n+1>` is created.
+You have time to now spread the `IDENTITY_NAME-secret-<n+1>` among the services using that identity.
+
+Once you are done, you can delete the old secret with the following command:
+
+```console
+kid complete rotation "IDENTITY_NAME"
+```
+
+## Rollback Identity's Token
+
+If you need to resume a deleted token, you can simply recreate the version using the following command:
+
+```console
+kid rollback token "IDENTITY_NAME" "VERSION"
+```
+
+This command will recreate the token with version `VERSION` for Service Account `IDENTITY_NAME`.
+
+## Revoke Identity's Token
+
+To revoke a token version, you can use the following command:
+
+```console
+kid revoke token "IDENTITY_NAME" "VERSION"
+```
+
+This command will delete the token with version `VERSION` for Service Account `IDENTITY_NAME`.
