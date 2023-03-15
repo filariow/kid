@@ -1,2 +1,7 @@
+# local folders
 bin
 out
+
+# vim temp
+*.swp
+*.swo

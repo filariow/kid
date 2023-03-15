@@ -19,10 +19,29 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package main
+package cmd
 
-import "github.com/filariow/ksa/cmd"
+import (
+	"fmt"
 
-func main() {
-	cmd.Execute()
+	"github.com/spf13/cobra"
+)
+
+// createCmd represents the create command
+var createCmd = &cobra.Command{
+	Use:   "create",
+	Short: "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return fmt.Errorf("command expected")
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(createCmd)
 }
