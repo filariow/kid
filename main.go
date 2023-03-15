@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 package main
 
-import "github.com/filariow/ksa/cmd"
+import "github.com/filariow/kid/cmd"
 
 func main() {
 	cmd.Execute()

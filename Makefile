@@ -16,7 +16,7 @@ SHELLCHECK_VERSION ?= v0.9.0
 GO_LINT_CMD = GOFLAGS="$(GOFLAGS)" GOGC=30 GOCACHE=$(GOCACHE) $(GOLANGCI_LINT) run
 
 build:
-	$(GO) build -ldflags="-s -w" -trimpath -o out/ksa main.go
+	$(GO) build -ldflags="-s -w" -trimpath -o out/kid main.go
 
 fmt:
 	$(GO) fmt ./...

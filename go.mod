@@ -1,4 +1,4 @@
-module github.com/filariow/ksa
+module github.com/filariow/kid
 
 go 1.20
 

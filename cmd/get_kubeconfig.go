@@ -25,7 +25,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/filariow/ksa/pkg/ksa"
+	"github.com/filariow/kid/pkg/kid"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -54,7 +54,7 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Args: cobra.MatchAll(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cli, err := ksa.GetCurrentContextClient()
+		cli, err := kid.GetCurrentContextClient()
 		if err != nil {
 			return err
 		}
@@ -62,18 +62,18 @@ to quickly create a Cobra application.`,
 		ctx := cmd.Context()
 
 		name := args[0]
-		s, err := ksa.GetLastServiceAccountSecrets(ctx, *cli, name, namespace)
+		s, err := kid.GetLastServiceAccountSecrets(ctx, *cli, name, namespace)
 		if err != nil {
 			return err
 		}
 
-		tkn, err := ksa.GetToken(s)
+		tkn, err := kid.GetToken(s)
 		if err != nil {
 			return err
 		}
 
 		o := getKubeconfigOptionsFromFlags(cmd.Flags())
-		kfg, err := ksa.GetKubeconfig(*cli, tkn, o)
+		kfg, err := kid.GetKubeconfig(*cli, tkn, o)
 		if err != nil {
 			return err
 		}
@@ -92,8 +92,8 @@ func init() {
 	getKubeconfigCmd.Flags().StringVarP(&getKubeconfigUser, getKubeconfigUserLongParam, "u", "", "if set overrides the user")
 }
 
-func getKubeconfigOptionsFromFlags(ff *pflag.FlagSet) ksa.GetKubeconfigOptions {
-	o := ksa.GetKubeconfigOptions{}
+func getKubeconfigOptionsFromFlags(ff *pflag.FlagSet) kid.GetKubeconfigOptions {
+	o := kid.GetKubeconfigOptions{}
 
 	if ff.Changed(getKubeconfigTargetNamespaceLongParam) {
 		o.Namespace = &getKubeconfigTargetNamespace

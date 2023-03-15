@@ -1,8 +1,6 @@
-# KSA - Kubernetes Service Account
+# KId - Kubernetes Identity
 
-Library to extract data needed to authenticate as a Service Account.
-This data can be used to build a kubeconfig.
-
+Command Line Application to manage Service Account based Identities.
 
 ## How to use it
 
@@ -16,7 +14,7 @@ To set the namespace, you can use the `-n` or `--namespace` argument.
 To create an Identity you can use the following command:
 
 ```console
-ksa create identity "IDENTITY_NAME"
+kid create identity "IDENTITY_NAME"
 ```
 As a result, the following resources will be created:
 - A Service Account with the name `IDENTITY_NAME`
@@ -25,7 +23,7 @@ As a result, the following resources will be created:
 ## Read the JWT Token for an identity
 
 ```console
-ksa get token "IDENTITY_NAME"
+kid get token "IDENTITY_NAME"
 ```
 
 As a result it will print in json format the following information:
@@ -36,7 +34,7 @@ As a result it will print in json format the following information:
 ## Get kubeconfig for an identity
 
 ```console
-ksa get kubeconfig "IDENTITY_NAME"
+kid get kubeconfig "IDENTITY_NAME"
 ```
 
 As a result it will print a kubeconfig valid for authenticating as the given Identity.

@@ -26,8 +26,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/filariow/ksa/pkg/identity"
-	"github.com/filariow/ksa/pkg/ksa"
+	"github.com/filariow/kid/pkg/identity"
+	"github.com/filariow/kid/pkg/kid"
 	"github.com/spf13/cobra"
 )
 
@@ -43,7 +43,7 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Args: cobra.MatchAll(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cli, err := ksa.GetCurrentContextClient()
+		cli, err := kid.GetCurrentContextClient()
 		if err != nil {
 			return err
 		}

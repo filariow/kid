@@ -26,7 +26,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/filariow/ksa/pkg/ksa"
+	"github.com/filariow/kid/pkg/kid"
 	"github.com/spf13/cobra"
 )
 
@@ -34,7 +34,7 @@ var namespace string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "ksa",
+	Use:   "kid",
 	Short: "A brief description of your application",
 	Long: `A longer description that spans multiple lines and likely contains
 examples and usage of using your application. For example:
@@ -57,7 +57,7 @@ func Execute() {
 }
 
 func init() {
-	ns, err := ksa.GetConfigDefaultNamespace()
+	ns, err := kid.GetConfigDefaultNamespace()
 	if err != nil {
 		fmt.Fprint(os.Stderr, "can not parse namespace from kubeconfig, using default")
 		*ns = "default"

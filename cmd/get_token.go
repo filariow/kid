@@ -26,7 +26,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/filariow/ksa/pkg/ksa"
+	"github.com/filariow/kid/pkg/kid"
 	"github.com/spf13/cobra"
 )
 
@@ -42,19 +42,19 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Args: cobra.MatchAll(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cli, err := ksa.GetCurrentContextClient()
+		cli, err := kid.GetCurrentContextClient()
 		if err != nil {
 			return err
 		}
 
 		ctx := cmd.Context()
 		name := args[0]
-		kdsec, err := ksa.GetLastServiceAccountSecrets(ctx, *cli, name, namespace)
+		kdsec, err := kid.GetLastServiceAccountSecrets(ctx, *cli, name, namespace)
 		if err != nil {
 			return err
 		}
 
-		kd, err := ksa.GetToken(kdsec)
+		kd, err := kid.GetToken(kdsec)
 		if err != nil {
 			return err
 		}
