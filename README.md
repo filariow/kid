@@ -25,7 +25,7 @@ As a result, the following resources will be created:
 To create a new Token version you can use the following command:
 
 ```console
-kid crate token "IDENTITY_NAME"
+kid create token "IDENTITY_NAME"
 ```
 
 If the last secret for Identity with name `IDENTITY_NAME` is `IDENTITY_NAME-secret-<n>`, a new `IDENTITY_NAME-secret-<n+1>` is created.
@@ -81,6 +81,7 @@ kid rollback token "IDENTITY_NAME" "VERSION"
 ```
 
 This command will recreate the token with version `VERSION` for Service Account `IDENTITY_NAME`.
+Provided version must be lower than higher existing.
 
 ## Revoke Identity's Token
 
@@ -91,3 +92,5 @@ kid revoke token "IDENTITY_NAME" "VERSION"
 ```
 
 This command will delete the token with version `VERSION` for Service Account `IDENTITY_NAME`.
+> Before revoking the last version of a token, please do generate a new one.
+> If you revoke a token and then create a new one, the same token you revoked will be created again.

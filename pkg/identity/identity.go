@@ -96,6 +96,20 @@ func RollbackIdentityKey(ctx context.Context, cli kubernetes.Clientset, name str
 		return nil, err
 	}
 
+	ls, err := kid.GetLastServiceAccountSecrets(ctx, cli, name, namespace)
+	if err != nil {
+		return nil, err
+	}
+
+	_, p, err := splitServiceAccountSecretName(ls.GetName())
+	if err != nil {
+		return nil, err
+	}
+
+	if version >= p {
+		return nil, fmt.Errorf("provided version is higher than latest token version '%d'", p)
+	}
+
 	sn := createSecretName(name, version)
 	return kid.CreateServiceAccountSecret(ctx, cli, sn, namespace, sa)
 }
