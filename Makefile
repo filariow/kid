@@ -38,9 +38,7 @@ $(OUTPUT_DIR):
 PYTHON_VENV_DIR = $(realpath $(OUTPUT_DIR))/venv3
 HACK_DIR ?= $(realpath $(PROJECT_DIR))/hack
 
-$(info $$OUTPUT_DIR is [${OUTPUT_DIR}])
 GOCACHE ?= $(OUTPUT_DIR)/.gocache
-$(info $$GOCACHE is [${GOCACHE}])
 
 GOFLAGS ?=
 
