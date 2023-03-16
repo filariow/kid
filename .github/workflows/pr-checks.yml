@@ -1,4 +1,4 @@
-name: Go
+name: PR Checks
 
 on:
   pull_request:
@@ -35,6 +35,34 @@ jobs:
 
     - name: Build
       run: GOCACHE=$(go env GOCACHE) make build
+
+
+  linters:
+    name: Run Linters
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Set up Go 1.20
+      uses: actions/setup-go@v4
+      with:
+        go-version: ^1.20
+      id: go
+
+    - name: Set up Python 1.20
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+        architecture: "x64"
+
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Python Linter
+      run: make lint-python
+
+    - name: Go Linter
+      run: make lint-go
+
 
   acceptance-tests:
     name: Acceptance Tests

@@ -32,11 +32,11 @@ endif
 SHELL = /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
 
-OUTPUT_DIR ?= $(realpath $(PROJECT_DIR))/out
+OUTPUT_DIR ?= $(PROJECT_DIR)/out
 $(OUTPUT_DIR):
 	mkdir -p $(OUTPUT_DIR)
-PYTHON_VENV_DIR = $(realpath $(OUTPUT_DIR))/venv3
-HACK_DIR ?= $(realpath $(PROJECT_DIR))/hack
+PYTHON_VENV_DIR = $(OUTPUT_DIR)/venv3
+HACK_DIR ?= $(PROJECT_DIR)/hack
 
 GOCACHE ?= $(OUTPUT_DIR)/.gocache
 
