@@ -31,14 +31,12 @@ import (
 
 // createTokenCmd represents the token command
 var createTokenCmd = &cobra.Command{
-	Use:   "token",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "token <identity>",
+	Short: "Creates a new token for the given identity",
+	Long: `A new secret is created for the given identity.
+The name of the secret is built starting from the ones present on the cluster.
+Identity secrets respect the format <identity>-key-<number>.
+The new secret will have the name <identity>-key<number+1>.`,
 	Args: cobra.MatchAll(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cli, err := kid.GetCurrentContextClient()

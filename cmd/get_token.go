@@ -32,15 +32,10 @@ import (
 
 // getTokenCmd represents the token command
 var getTokenCmd = &cobra.Command{
-	Use:   "token",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Args: cobra.MatchAll(cobra.ExactArgs(1)),
+	Use:   "token <identity>",
+	Short: "Prints the last token the given identity",
+	Long:  `Fetches and prints to stdout the last token for the given identity.`,
+	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cli, err := kid.GetCurrentContextClient()
 		if err != nil {

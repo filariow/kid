@@ -44,14 +44,10 @@ var (
 
 // getKubeconfigCmd represents the kubeconfig command
 var getKubeconfigCmd = &cobra.Command{
-	Use:   "kubeconfig",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "kubeconfig <identity>",
+	Short: "Prints the kubeconfig for authenticating as the given identity",
+	Long: `Creates and prints to stdout the kubeconfig for authenticating as the given identity.
+The token embedded in the kubeconfig is the last one created.`,
 	Args: cobra.MatchAll(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cli, err := kid.GetCurrentContextClient()

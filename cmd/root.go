@@ -35,16 +35,14 @@ var namespace string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "kid",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "KId - Kubernetes Identity",
+	Long: `KId (Kubernetes Identity) is a Command Line Application to create and manage Identities.
+Each identity is a Service Account.
+This tool helps managing JWT tokens (create, revoke, rotate, rollback) and exporting kubeconfig.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+It uses heavily the convention over configuration paradigm and its not meant to
+provide a solid and constraining workflow.It gives you a lot of freedom, so be wise.
+Do not create tokens with the same version of revoked/leaked ones!`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

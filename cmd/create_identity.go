@@ -33,14 +33,12 @@ import (
 
 // createIdentityCmd represents the identity command
 var createIdentityCmd = &cobra.Command{
-	Use:   "identity",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Use:   "identity <name>",
+	Short: "This command creates the new identity",
+	Long: `A new service account and a first secret are created.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+The service account is named after the identity, whereas the secret name
+respect the following format '<identity>-key-<number>'.`,
 	Args: cobra.MatchAll(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cli, err := kid.GetCurrentContextClient()

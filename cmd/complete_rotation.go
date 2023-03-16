@@ -32,14 +32,13 @@ import (
 
 // completeRotationCmd represents the rotation command
 var completeRotationCmd = &cobra.Command{
-	Use:   "rotation",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Use:   "rotation <identity>",
+	Short: "Complete the key rotation for an identity",
+	Long: `Key rotation is performed in two phases.
+You create a new key and update your services with this new one.
+Finally, you remove the old one.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+This step deletes the old key`,
 	Args: cobra.MatchAll(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cli, err := kid.GetCurrentContextClient()
