@@ -1,7 +1,7 @@
 import polling2
 from steps.environment import ctx
 from steps.command import Command
-from behave import then
+from behave import then, given, when
 
 
 class Kubernetes(object):
@@ -70,6 +70,7 @@ class Kubernetes(object):
 
 # Behave steps
 
+@given(u'Service Account "{sa_name}" exists')
 @then(u'Service Account "{sa_name}" exists')
 def service_account_exists(context, sa_name: str):
     k = Kubernetes()
@@ -78,11 +79,21 @@ def service_account_exists(context, sa_name: str):
         step=1,
         timeout=30)
 
-
+@given(u'Secret "{secret}" exists')
 @then(u'Secret "{secret}" exists')
 def secret_exists(context, secret: str):
     k = Kubernetes()
     polling2.poll(
         target=lambda: k.secret_exists(secret, context.namespace),
+        step=1,
+        timeout=30)
+
+
+@given(u'Secret "{secret}" does not exist')
+@then(u'Secret "{secret}" does not exist')
+def secret_not_exists(context, secret: str):
+    k = Kubernetes()
+    polling2.poll(
+        target=lambda: not k.secret_exists(secret, context.namespace),
         step=1,
         timeout=30)
