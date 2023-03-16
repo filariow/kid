@@ -28,7 +28,7 @@ import (
 // revokeCmd represents the revoke command
 var revokeCmd = &cobra.Command{
 	Use:   "revoke",
-	Short: "revoke command",
+	Short: "Revoke a resource, usually a Token",
 }
 
 func init() {

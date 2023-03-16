@@ -29,7 +29,7 @@ import (
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
-	Short: "get command",
+	Short: "Display a resource, like Kubeconfig or a Token",
 }
 
 func init() {

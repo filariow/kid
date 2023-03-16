@@ -34,7 +34,7 @@ import (
 // getTokenCmd represents the token command
 var getTokenCmd = &cobra.Command{
 	Use:   "token <identity>",
-	Short: "Prints the last token the given identity",
+	Short: "Display the last token for the given identity",
 	Long:  `Fetches and prints to stdout the last token for the given identity.`,
 	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {

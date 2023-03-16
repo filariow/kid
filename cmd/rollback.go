@@ -28,7 +28,7 @@ import (
 // rollbackCmd represents the rollback command
 var rollbackCmd = &cobra.Command{
 	Use:   "rollback",
-	Short: "rollback command",
+	Short: "Rollback a resource, usually tokens",
 }
 
 func init() {

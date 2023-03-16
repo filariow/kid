@@ -29,7 +29,7 @@ import (
 // beginCmd represents the begin command
 var beginCmd = &cobra.Command{
 	Use:   "begin",
-	Short: "begin command",
+	Short: "Begin a complex procedure, like key rotation",
 }
 
 func init() {

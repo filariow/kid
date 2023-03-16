@@ -29,7 +29,7 @@ import (
 // createCmd represents the create command
 var createCmd = &cobra.Command{
 	Use:   "create",
-	Short: "create command",
+	Short: "Create a resource, like Identity or Token",
 }
 
 func init() {

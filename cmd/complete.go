@@ -29,7 +29,7 @@ import (
 // completeCmd represents the complete command
 var completeCmd = &cobra.Command{
 	Use:   "complete",
-	Short: "complete command",
+	Short: "Complete complex procedure, like key rotation",
 }
 
 func init() {

@@ -32,7 +32,7 @@ import (
 // createTokenCmd represents the token command
 var createTokenCmd = &cobra.Command{
 	Use:   "token <identity>",
-	Short: "Creates a new token for the given identity",
+	Short: "Create a new token for the given identity",
 	Long: `A new secret is created for the given identity.
 The name of the secret is built starting from the ones present on the cluster.
 Identity secrets respect the format <identity>-key-<number>.

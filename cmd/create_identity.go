@@ -34,7 +34,7 @@ import (
 // createIdentityCmd represents the identity command
 var createIdentityCmd = &cobra.Command{
 	Use:   "identity <name>",
-	Short: "This command creates the new identity",
+	Short: "Create a new identity",
 	Long: `A new service account and a first secret are created.
 
 The service account is named after the identity, whereas the secret name

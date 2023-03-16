@@ -33,7 +33,7 @@ import (
 // revokeTokenCmd represents the token command
 var revokeTokenCmd = &cobra.Command{
 	Use:   "token <identity> <version>",
-	Short: "Revokes tokens",
+	Short: "Revoke a token",
 	Long:  `Revokes the token with given version for the given identity`,
 	Args:  cobra.MatchAll(cobra.ExactArgs(2)),
 	RunE: func(cmd *cobra.Command, args []string) error {

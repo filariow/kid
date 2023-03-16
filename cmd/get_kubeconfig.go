@@ -46,7 +46,7 @@ var (
 // getKubeconfigCmd represents the kubeconfig command
 var getKubeconfigCmd = &cobra.Command{
 	Use:   "kubeconfig <identity>",
-	Short: "Prints the kubeconfig for authenticating as the given identity",
+	Short: "Display the kubeconfig for authenticating as the given identity",
 	Long: `Creates and prints to stdout the kubeconfig for authenticating as the given identity.
 The token embedded in the kubeconfig is the last one created.`,
 	Args: cobra.MatchAll(cobra.ExactArgs(1)),

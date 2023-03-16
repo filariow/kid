@@ -33,7 +33,7 @@ import (
 // rollbackTokenCmd represents the token command
 var rollbackTokenCmd = &cobra.Command{
 	Use:   "token <identity> <version>",
-	Short: "Rollbacks a token",
+	Short: "Rollback a token",
 	Long:  `Rollback the token with a given version for the given identity.`,
 	Args:  cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
