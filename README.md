@@ -8,8 +8,9 @@ The command line application get the kubeconfig by looking for the KUBECONFIG en
 
 To set the namespace, you can use the `-n` or `--namespace` argument.
 
+## Porcelain commands
 
-## Create an Identity
+### Create an Identity
 
 To create an Identity you can use the following command:
 
@@ -20,17 +21,7 @@ As a result, the following resources will be created:
 - A Service Account with the name `IDENTITY_NAME`
 - A Secret with the name `IDENTITY_NAME-secret-1` and type `kubernetes.io/service-account-token`
 
-## Create a new Token Version
-
-To create a new Token version you can use the following command:
-
-```console
-kid create token "IDENTITY_NAME"
-```
-
-If the last secret for Identity with name `IDENTITY_NAME` is `IDENTITY_NAME-secret-<n>`, a new `IDENTITY_NAME-secret-<n+1>` is created.
-
-## Read the JWT Token for an identity
+### Read the JWT Token for an identity
 
 ```console
 kid get token "IDENTITY_NAME"
@@ -41,7 +32,7 @@ As a result it will print in json format the following information:
 - Namespace
 - JWT Token
 
-## Get kubeconfig for an identity
+### Get kubeconfig for an identity
 
 ```console
 kid get kubeconfig "IDENTITY_NAME"
@@ -54,7 +45,7 @@ The following parameters may be overwritten:
 - Context's namespace
 - Context's username
 
-## Rotate Identity's Token
+### Rotate Identity's Token
 
 Key rotation is performed in two steps.
 In the first step you will create a new key, in the second you will delete the old one.
@@ -72,7 +63,7 @@ Once you are done, you can delete the old secret with the following command:
 kid complete rotation "IDENTITY_NAME"
 ```
 
-## Rollback Identity's Token
+### Rollback Identity's Token
 
 If you need to resume a deleted token, you can simply recreate the version using the following command:
 
@@ -83,7 +74,20 @@ kid rollback token "IDENTITY_NAME" "VERSION"
 This command will recreate the token with version `VERSION` for Service Account `IDENTITY_NAME`.
 Provided version must be lower than higher existing.
 
-## Revoke Identity's Token
+## Plumbing commands 
+
+### Create a new Token Version
+
+To create a new Token version you can use the following command:
+
+```console
+kid create token "IDENTITY_NAME"
+```
+
+If the last secret for Identity with name `IDENTITY_NAME` is `IDENTITY_NAME-secret-<n>`, a new `IDENTITY_NAME-secret-<n+1>` is created.
+
+
+### Revoke Identity's Token
 
 To revoke a token version, you can use the following command:
 
