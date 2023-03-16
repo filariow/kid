@@ -26,7 +26,7 @@ import (
 	"strconv"
 
 	"github.com/filariow/kid/pkg/identity"
-	"github.com/filariow/kid/pkg/kid"
+	"github.com/filariow/kid/pkg/kube"
 	"github.com/spf13/cobra"
 )
 
@@ -37,7 +37,7 @@ var rollbackTokenCmd = &cobra.Command{
 	Long:  `Rollback the token with a given version for the given identity.`,
 	Args:  cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cli, err := kid.GetCurrentContextClient()
+		cli, err := kube.GetCurrentContextClient()
 		if err != nil {
 			return err
 		}

@@ -26,7 +26,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/filariow/kid/pkg/kid"
+	"github.com/filariow/kid/pkg/identity"
+	"github.com/filariow/kid/pkg/kube"
 	"github.com/spf13/cobra"
 )
 
@@ -37,19 +38,19 @@ var getTokenCmd = &cobra.Command{
 	Long:  `Fetches and prints to stdout the last token for the given identity.`,
 	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cli, err := kid.GetCurrentContextClient()
+		cli, err := kube.GetCurrentContextClient()
 		if err != nil {
 			return err
 		}
 
 		ctx := cmd.Context()
 		name := args[0]
-		kdsec, err := kid.GetLastServiceAccountSecrets(ctx, *cli, name, namespace)
+		kdsec, err := kube.GetLastServiceAccountSecrets(ctx, *cli, name, namespace)
 		if err != nil {
 			return err
 		}
 
-		kd, err := kid.GetToken(kdsec)
+		kd, err := identity.GetToken(kdsec)
 		if err != nil {
 			return err
 		}

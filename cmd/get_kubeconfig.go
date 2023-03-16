@@ -25,7 +25,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/filariow/kid/pkg/kid"
+	"github.com/filariow/kid/pkg/identity"
+	"github.com/filariow/kid/pkg/kube"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -50,7 +51,7 @@ var getKubeconfigCmd = &cobra.Command{
 The token embedded in the kubeconfig is the last one created.`,
 	Args: cobra.MatchAll(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cli, err := kid.GetCurrentContextClient()
+		cli, err := kube.GetCurrentContextClient()
 		if err != nil {
 			return err
 		}
@@ -58,18 +59,18 @@ The token embedded in the kubeconfig is the last one created.`,
 		ctx := cmd.Context()
 
 		name := args[0]
-		s, err := kid.GetLastServiceAccountSecrets(ctx, *cli, name, namespace)
+		s, err := kube.GetLastServiceAccountSecrets(ctx, *cli, name, namespace)
 		if err != nil {
 			return err
 		}
 
-		tkn, err := kid.GetToken(s)
+		tkn, err := identity.GetToken(s)
 		if err != nil {
 			return err
 		}
 
 		o := getKubeconfigOptionsFromFlags(cmd.Flags())
-		kfg, err := kid.GetKubeconfig(*cli, tkn, o)
+		kfg, err := identity.GetKubeconfig(*cli, tkn, o)
 		if err != nil {
 			return err
 		}
@@ -88,8 +89,8 @@ func init() {
 	getKubeconfigCmd.Flags().StringVarP(&getKubeconfigUser, getKubeconfigUserLongParam, "u", "", "if set overrides the user")
 }
 
-func getKubeconfigOptionsFromFlags(ff *pflag.FlagSet) kid.GetKubeconfigOptions {
-	o := kid.GetKubeconfigOptions{}
+func getKubeconfigOptionsFromFlags(ff *pflag.FlagSet) identity.GetKubeconfigOptions {
+	o := identity.GetKubeconfigOptions{}
 
 	if ff.Changed(getKubeconfigTargetNamespaceLongParam) {
 		o.Namespace = &getKubeconfigTargetNamespace

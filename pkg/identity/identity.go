@@ -28,7 +28,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/filariow/kid/pkg/kid"
+	"github.com/filariow/kid/pkg/kube"
 	corev1 "k8s.io/api/core/v1"
 	mv1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -41,7 +41,7 @@ type Instance struct {
 }
 
 func CreateIdentity(ctx context.Context, cli kubernetes.Clientset, name string, namespace string) (*Instance, error) {
-	ss, err := kid.GetServiceAccountSecrets(ctx, cli, name, namespace)
+	ss, err := kube.GetServiceAccountSecrets(ctx, cli, name, namespace)
 	if err != nil {
 		return nil, err
 	}
@@ -49,13 +49,13 @@ func CreateIdentity(ctx context.Context, cli kubernetes.Clientset, name string, 
 		return nil, fmt.Errorf("error access tokens for Service Account '%s/%s' already exists", namespace, name)
 	}
 
-	sa, err := kid.CreateServiceAccount(ctx, cli, name, namespace)
+	sa, err := kube.CreateServiceAccount(ctx, cli, name, namespace)
 	if err != nil {
 		return nil, err
 	}
 
 	sn := createSecretName(name, 1)
-	s, err := kid.CreateServiceAccountSecret(ctx, cli, sn, namespace, sa)
+	s, err := kube.CreateServiceAccountSecret(ctx, cli, sn, namespace, sa)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func CreateNewTokenVersion(ctx context.Context, cli kubernetes.Clientset, name s
 		return nil, err
 	}
 
-	s, err := kid.GetLastServiceAccountSecrets(ctx, cli, name, namespace)
+	s, err := kube.GetLastServiceAccountSecrets(ctx, cli, name, namespace)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func CreateNewTokenVersion(ctx context.Context, cli kubernetes.Clientset, name s
 		return nil, err
 	}
 
-	return kid.CreateServiceAccountSecret(ctx, cli, *sn, namespace, sa)
+	return kube.CreateServiceAccountSecret(ctx, cli, *sn, namespace, sa)
 }
 
 func BeginIdentityKeyRotation(ctx context.Context, cli kubernetes.Clientset, name string, namespace string) (*corev1.Secret, error) {
@@ -96,7 +96,7 @@ func RollbackIdentityKey(ctx context.Context, cli kubernetes.Clientset, name str
 		return nil, err
 	}
 
-	ls, err := kid.GetLastServiceAccountSecrets(ctx, cli, name, namespace)
+	ls, err := kube.GetLastServiceAccountSecrets(ctx, cli, name, namespace)
 	if err != nil {
 		return nil, err
 	}
@@ -111,19 +111,19 @@ func RollbackIdentityKey(ctx context.Context, cli kubernetes.Clientset, name str
 	}
 
 	sn := createSecretName(name, version)
-	return kid.CreateServiceAccountSecret(ctx, cli, sn, namespace, sa)
+	return kube.CreateServiceAccountSecret(ctx, cli, sn, namespace, sa)
 }
 
 func RevokeIdentityKey(ctx context.Context, cli kubernetes.Clientset, name string, namespace string, version uint64) (*string, error) {
 	sn := createSecretName(name, version)
-	if err := kid.DeleteServiceAccountSecret(ctx, cli, sn, namespace); err != nil {
+	if err := kube.DeleteServiceAccountSecret(ctx, cli, sn, namespace); err != nil {
 		return nil, err
 	}
 	return &sn, nil
 }
 
 func CompleteIdentityKeyRotation(ctx context.Context, cli kubernetes.Clientset, name string, namespace string) (*string, error) {
-	s, err := kid.GetLastServiceAccountSecrets(ctx, cli, name, namespace)
+	s, err := kube.GetLastServiceAccountSecrets(ctx, cli, name, namespace)
 	if err != nil {
 		return nil, err
 	}

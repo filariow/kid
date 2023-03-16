@@ -26,7 +26,7 @@ import (
 	"fmt"
 
 	"github.com/filariow/kid/pkg/identity"
-	"github.com/filariow/kid/pkg/kid"
+	"github.com/filariow/kid/pkg/kube"
 	"github.com/spf13/cobra"
 )
 
@@ -41,7 +41,7 @@ Finally, you remove the old one.
 This step creates the new key, without removing the old one.`,
 	Args: cobra.MatchAll(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cli, err := kid.GetCurrentContextClient()
+		cli, err := kube.GetCurrentContextClient()
 		if err != nil {
 			return err
 		}

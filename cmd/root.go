@@ -26,7 +26,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/filariow/kid/pkg/kid"
+	"github.com/filariow/kid/pkg/kube"
 	"github.com/spf13/cobra"
 )
 
@@ -55,7 +55,7 @@ func Execute() {
 }
 
 func init() {
-	ns, err := kid.GetConfigDefaultNamespace()
+	ns, err := kube.GetConfigDefaultNamespace()
 	if err != nil {
 		fmt.Fprint(os.Stderr, "can not parse namespace from kubeconfig, using default")
 		*ns = "default"

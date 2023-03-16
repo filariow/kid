@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package kid
+package kube
 
 import (
 	"context"
@@ -30,105 +30,9 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	mv1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
-	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
 
 var ErrSecretNotFound = fmt.Errorf("service account's secret not found")
-var ErrSecretMalformed = fmt.Errorf("service account's secret malformed")
-
-type ServiceAccountToken struct {
-	CACrt     []byte `json:"ca.crt"`
-	Namespace []byte `json:"namespace"`
-	Token     []byte `json:"token"`
-}
-
-type GetKubeconfigOptions struct {
-	OverrideHost *string
-	User         *string
-	Namespace    *string
-}
-
-func GetKubeconfig(cli kubernetes.Clientset, token *ServiceAccountToken, opts GetKubeconfigOptions) ([]byte, error) {
-	cfg, err := GetRESTConfig()
-	if err != nil {
-		return nil, err
-	}
-
-	h := cfg.Host
-	if opts.OverrideHost != nil {
-		h = *opts.OverrideHost
-	}
-
-	cl := map[string]*clientcmdapi.Cluster{
-		cfg.ServerName: {
-			Server:                   h,
-			CertificateAuthorityData: token.CACrt,
-		},
-	}
-
-	un := "default-user"
-	if opts.User != nil {
-		un = *opts.User
-	}
-	ai := map[string]*clientcmdapi.AuthInfo{
-		un: {
-			Token: string(token.Token),
-		},
-	}
-
-	ct := map[string]*clientcmdapi.Context{
-		"default-context": {
-			Cluster:  cfg.ServerName,
-			AuthInfo: un,
-		},
-	}
-	if opts.Namespace != nil {
-		ct["default-context"].Namespace = *opts.Namespace
-	}
-
-	cc := clientcmdapi.Config{
-		Kind:       "Config",
-		APIVersion: "v1",
-		Clusters:   cl,
-		Contexts:   ct,
-		AuthInfos:  ai,
-	}
-
-	return clientcmd.Write(cc)
-}
-
-func GetToken(secret *corev1.Secret) (*ServiceAccountToken, error) {
-	c, err := getSecretDataField(secret, "ca.crt")
-	if err != nil {
-		return nil, err
-	}
-
-	n, err := getSecretDataField(secret, "namespace")
-	if err != nil {
-		return nil, err
-	}
-
-	t, err := getSecretDataField(secret, "token")
-	if err != nil {
-		return nil, err
-	}
-
-	return &ServiceAccountToken{
-		CACrt:     c,
-		Namespace: n,
-		Token:     t,
-	}, nil
-}
-
-func getSecretDataField(secret *corev1.Secret, field string) ([]byte, error) {
-	d, ok := secret.Data[field]
-	if !ok {
-		return nil, fmt.Errorf("%w: can not find '%s' in secret '%s/%s'", ErrSecretMalformed, field, secret.Namespace, secret.Name)
-	}
-
-	return d, nil
-}
 
 func GetLastServiceAccountSecrets(ctx context.Context, cli kubernetes.Clientset, name string, namespace string) (*corev1.Secret, error) {
 	ss, err := GetServiceAccountSecrets(ctx, cli, name, namespace)
@@ -190,16 +94,4 @@ func CreateServiceAccountSecret(ctx context.Context, cli kubernetes.Clientset, n
 
 func DeleteServiceAccountSecret(ctx context.Context, cli kubernetes.Clientset, name string, namespace string) error {
 	return cli.CoreV1().Secrets(namespace).Delete(ctx, name, mv1.DeleteOptions{})
-}
-
-func CreateServiceAccount(ctx context.Context, cli kubernetes.Clientset, name string, namespace string) (*corev1.ServiceAccount, error) {
-	c := &corev1.ServiceAccount{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      name,
-			Namespace: namespace,
-		},
-	}
-
-	o := mv1.CreateOptions{}
-	return cli.CoreV1().ServiceAccounts(namespace).Create(ctx, c, o)
 }

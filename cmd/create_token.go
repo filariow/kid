@@ -25,7 +25,7 @@ import (
 	"fmt"
 
 	"github.com/filariow/kid/pkg/identity"
-	"github.com/filariow/kid/pkg/kid"
+	"github.com/filariow/kid/pkg/kube"
 	"github.com/spf13/cobra"
 )
 
@@ -39,7 +39,7 @@ Identity secrets respect the format <identity>-key-<number>.
 The new secret will have the name <identity>-key<number+1>.`,
 	Args: cobra.MatchAll(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cli, err := kid.GetCurrentContextClient()
+		cli, err := kube.GetCurrentContextClient()
 		if err != nil {
 			return err
 		}

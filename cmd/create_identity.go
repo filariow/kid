@@ -27,7 +27,7 @@ import (
 	"fmt"
 
 	"github.com/filariow/kid/pkg/identity"
-	"github.com/filariow/kid/pkg/kid"
+	"github.com/filariow/kid/pkg/kube"
 	"github.com/spf13/cobra"
 )
 
@@ -41,7 +41,7 @@ The service account is named after the identity, whereas the secret name
 respect the following format '<identity>-key-<number>'.`,
 	Args: cobra.MatchAll(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cli, err := kid.GetCurrentContextClient()
+		cli, err := kube.GetCurrentContextClient()
 		if err != nil {
 			return err
 		}

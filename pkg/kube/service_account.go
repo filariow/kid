@@ -20,44 +20,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package cmd
+package kube
 
 import (
-	"fmt"
+	"context"
 
-	"github.com/filariow/kid/pkg/identity"
-	"github.com/filariow/kid/pkg/kube"
-	"github.com/spf13/cobra"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	mv1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
 )
 
-// completeRotationCmd represents the rotation command
-var completeRotationCmd = &cobra.Command{
-	Use:   "rotation <identity>",
-	Short: "Complete the key rotation for an identity",
-	Long: `Key rotation is performed in two phases.
-You create a new key and update your services with this new one.
-Finally, you remove the old one.
+func CreateServiceAccount(ctx context.Context, cli kubernetes.Clientset, name string, namespace string) (*corev1.ServiceAccount, error) {
+	c := &corev1.ServiceAccount{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: namespace,
+		},
+	}
 
-This step deletes the old key`,
-	Args: cobra.MatchAll(cobra.ExactArgs(1)),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		cli, err := kube.GetCurrentContextClient()
-		if err != nil {
-			return err
-		}
-
-		ctx := cmd.Context()
-		name := args[0]
-		s, err := identity.CompleteIdentityKeyRotation(ctx, *cli, name, namespace)
-		if err != nil {
-			return err
-		}
-
-		fmt.Printf("deleted secret '%s/%s'\n", namespace, *s)
-		return nil
-	},
-}
-
-func init() {
-	completeCmd.AddCommand(completeRotationCmd)
+	o := mv1.CreateOptions{}
+	return cli.CoreV1().ServiceAccounts(namespace).Create(ctx, c, o)
 }
