@@ -1,8 +1,6 @@
 name: Go
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -11,8 +9,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    steps:
 
+    steps:
     - name: Set up Go 1.20
       uses: actions/setup-go@v4
       with:
@@ -37,3 +35,29 @@ jobs:
 
     - name: Build
       run: GOCACHE=$(go env GOCACHE) make build
+
+  acceptance-tests:
+    name: Acceptance Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Go 1.20
+      uses: actions/setup-go@v4
+      with:
+        go-version: ^1.20
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v3
+
+    - name: Get dependencies
+      run: |
+        go get -v -t -d ./...
+
+    - name: Build
+      run: GOCACHE=$(go env GOCACHE) make build
+
+    - name: Run Aceptance Tests
+      run: |
+        kind create cluster --name kid
+        make test-acceptance-x
