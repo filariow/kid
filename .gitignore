@@ -1,4 +1,5 @@
 # local folders
+__pycache__
 bin
 out
 
