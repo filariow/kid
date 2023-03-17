@@ -48,7 +48,7 @@ class Command(object):
         except subprocess.CalledProcessError as err:
             output = err.output
             exit_code = err.returncode
-            print('ERROR MESSGE:', output)
+            print('ERROR MESSAGE:', output)
             print('ERROR CODE:', exit_code)
         return output.decode("utf-8"), exit_code
 

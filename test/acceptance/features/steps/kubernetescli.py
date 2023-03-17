@@ -1,7 +1,7 @@
 import polling2
 from steps.environment import ctx
 from steps.command import Command
-from behave import then, given, when
+from behave import then, given
 
 
 class Kubernetes(object):
@@ -78,6 +78,7 @@ def service_account_exists(context, sa_name: str):
         target=lambda: k.service_account_exists(sa_name, context.namespace),
         step=1,
         timeout=30)
+
 
 @given(u'Secret "{secret}" exists')
 @then(u'Secret "{secret}" exists')
