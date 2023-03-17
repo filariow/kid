@@ -47,7 +47,7 @@ func GetKubeconfig(cli kubernetes.Clientset, token *ServiceAccountToken, opts Ge
 	}
 
 	cl := map[string]*clientcmdapi.Cluster{
-		cfg.ServerName: {
+		"default-cluster": {
 			Server:                   h,
 			CertificateAuthorityData: token.CACrt,
 		},
@@ -65,7 +65,7 @@ func GetKubeconfig(cli kubernetes.Clientset, token *ServiceAccountToken, opts Ge
 
 	ct := map[string]*clientcmdapi.Context{
 		"default-context": {
-			Cluster:  cfg.ServerName,
+			Cluster:  "default-cluster",
 			AuthInfo: un,
 		},
 	}
@@ -74,11 +74,12 @@ func GetKubeconfig(cli kubernetes.Clientset, token *ServiceAccountToken, opts Ge
 	}
 
 	cc := clientcmdapi.Config{
-		Kind:       "Config",
-		APIVersion: "v1",
-		Clusters:   cl,
-		Contexts:   ct,
-		AuthInfos:  ai,
+		Kind:           "Config",
+		APIVersion:     "v1",
+		Clusters:       cl,
+		Contexts:       ct,
+		AuthInfos:      ai,
+		CurrentContext: "default-context",
 	}
 
 	return clientcmd.Write(cc)
